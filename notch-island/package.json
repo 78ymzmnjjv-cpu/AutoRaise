@@ -1,0 +1,55 @@
+{
+  "name": "notch-island",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MacのノッチをLive Activity化するアプリ（Framer Motion + 21st.dev スタイル部品）",
+  "main": "dist-electron/electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"tsc -p tsconfig.electron.json -w\" \"wait-on tcp:5173 dist-electron/electron/main.js && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron .\"",
+    "dev:web": "vite",
+    "build": "tsc -p tsconfig.electron.json && tsc -p tsconfig.json --noEmit && vite build",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc -p tsconfig.electron.json --noEmit && tsc -p tsconfig.json --noEmit",
+    "build:helpers": "mkdir -p helpers/bin && swiftc -O helpers/micstate.swift -o helpers/bin/micstate",
+    "install-hooks": "node scripts/install-hooks.mjs",
+    "package": "npm run build && electron-builder --mac"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "clsx": "^2.1.1",
+    "motion": "^12.23.0",
+    "node-ical": "^0.27.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwind-merge": "^3.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.0",
+    "wait-on": "^8.0.0"
+  },
+  "build": {
+    "appId": "dev.notch-island.app",
+    "productName": "Notch Island",
+    "files": ["dist/**", "dist-electron/**", "hooks/**", "helpers/bin/**"],
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.productivity",
+      "extendInfo": {
+        "LSUIElement": true,
+        "NSAppleEventsUsageDescription": "再生中の曲の取得と操作、貼り付けのために使います。",
+        "NSMicrophoneUsageDescription": "画面収録に音声を含めるときに使います。"
+      }
+    }
+  }
+}
