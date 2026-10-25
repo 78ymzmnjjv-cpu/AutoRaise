@@ -1,0 +1,53 @@
+name: Notch Island
+
+on:
+  push:
+    paths: ["notch-island/**", ".github/workflows/notch-island.yml"]
+  pull_request:
+    paths: ["notch-island/**", ".github/workflows/notch-island.yml"]
+  workflow_dispatch:
+
+jobs:
+  mac:
+    runs-on: macos-15
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: notch-island
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: notch-island/package-lock.json
+      - run: npm ci
+      - name: 型チェックとビルド
+        run: npm run build
+      - name: マイク検知ヘルパー（Swift）
+        run: npm run build:helpers
+      - name: ヘルパーが起動して状態を出す
+        run: |
+          ./helpers/bin/micstate > mic.txt & pid=$!
+          sleep 2; kill $pid || true
+          cat mic.txt; grep -Eq '^[01]$' mic.txt
+      - name: macOS コマンドの出力形式
+        run: |
+          pmset -g batt || true
+          osascript -e 'if application "Music" is running then return "running"' -e 'return "not running"'
+          system_profiler SPBluetoothDataType -json | head -c 400 || true
+      - name: 起動して島の表示を確認
+        run: npm run smoke
+      - name: .dmg を作る（未署名）
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: npx electron-builder --mac dmg --publish never
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-screenshots
+          path: notch-island/smoke-out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Notch-Island-dmg
+          path: notch-island/release/*.dmg
