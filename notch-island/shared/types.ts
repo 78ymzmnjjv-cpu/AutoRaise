@@ -154,7 +154,7 @@ export interface NotchConfig {
   calendar: { icsUrls: string[]; refreshMinutes: number };
   ai: { model: string; effort: "low" | "medium" | "high"; apiKey?: string };
   permissionTimeoutSec: number;
-  recorder: { saveDir: string; captureAudio: boolean };
+  recorder: { saveDir: string; captureAudio: boolean; showMicIndicator: boolean };
   server: { port: number };
   focus: { workMin: number; breakMin: number; sets: number };
 }

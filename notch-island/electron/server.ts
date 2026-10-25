@@ -44,7 +44,10 @@ function send(res: http.ServerResponse, code: number, body: unknown) {
   res.end(JSON.stringify(body));
 }
 
-export function startServer(cfg: NotchConfig) {
+/** 自動テスト（NOTCH_SMOKE=1）のときだけ追加されるルート */
+export type ExtraRoutes = Record<string, (body: unknown) => Promise<unknown> | unknown>;
+
+export function startServer(cfg: NotchConfig, extra: ExtraRoutes = {}) {
   const token = Buffer.from(issueToken());
 
   const server = http.createServer(async (req, res) => {
@@ -72,6 +75,7 @@ export function startServer(cfg: NotchConfig) {
       case "/notify":
         return send(res, 200, { id: pushNotice(body as Record<string, string>).id });
       default:
+        if (req.url && extra[req.url]) return send(res, 200, (await extra[req.url](body)) ?? { ok: true });
         return send(res, 404, { error: "not found" });
     }
   });

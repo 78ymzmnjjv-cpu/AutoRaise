@@ -12,7 +12,8 @@
     "typecheck": "tsc -p tsconfig.electron.json --noEmit && tsc -p tsconfig.json --noEmit",
     "build:helpers": "mkdir -p helpers/bin && swiftc -O helpers/micstate.swift -o helpers/bin/micstate",
     "install-hooks": "node scripts/install-hooks.mjs",
-    "package": "npm run build && electron-builder --mac"
+    "package": "npm run build && electron-builder --mac",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",
@@ -41,7 +42,12 @@
   "build": {
     "appId": "dev.notch-island.app",
     "productName": "Notch Island",
-    "files": ["dist/**", "dist-electron/**", "hooks/**", "helpers/bin/**"],
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "hooks/**",
+      "helpers/bin/**"
+    ],
     "mac": {
       "target": "dmg",
       "category": "public.app-category.productivity",
@@ -50,6 +56,9 @@
         "NSAppleEventsUsageDescription": "再生中の曲の取得と操作、貼り付けのために使います。",
         "NSMicrophoneUsageDescription": "画面収録に音声を含めるときに使います。"
       }
+    },
+    "directories": {
+      "output": "release"
     }
   }
 }

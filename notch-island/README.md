@@ -40,7 +40,7 @@ npm run package    # .dmg を作る（release/ に出力）
   "calendar": { "icsUrls": [], "refreshMinutes": 5 },
   "ai": { "model": "claude-opus-5-5", "effort": "low" },  // "apiKey": "sk-ant-..." も書ける
   "permissionTimeoutSec": 110,
-  "recorder": { "saveDir": "~/Desktop", "captureAudio": false },
+  "recorder": { "saveDir": "~/Desktop", "captureAudio": false, "showMicIndicator": true },  // 音声入力中の表示が邪魔なら false
   "server": { "port": 47811 },
   "focus": { "workMin": 25, "breakMin": 5, "sets": 4 }
 }

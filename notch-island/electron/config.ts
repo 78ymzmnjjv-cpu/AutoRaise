@@ -12,7 +12,7 @@ const DEFAULTS: NotchConfig = {
   calendar: { icsUrls: [], refreshMinutes: 5 },
   ai: { model: "claude-opus-5-5", effort: "low" },
   permissionTimeoutSec: 110,
-  recorder: { saveDir: path.join(os.homedir(), "Desktop"), captureAudio: false },
+  recorder: { saveDir: path.join(os.homedir(), "Desktop"), captureAudio: false, showMicIndicator: true },
   server: { port: 47811 },
   focus: { workMin: 25, breakMin: 5, sets: 4 },
 };

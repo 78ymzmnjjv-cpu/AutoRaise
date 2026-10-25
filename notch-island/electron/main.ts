@@ -2,6 +2,7 @@ import path from "node:path";
 import { app, BrowserWindow, globalShortcut, ipcMain, Menu, nativeImage, screen, shell, Tray } from "electron";
 import { DATA_DIR, loadConfig } from "./config";
 import { startServer } from "./server";
+import { smokeRoutes } from "./smoke";
 import { store } from "./store";
 import { musicCommand, startNowPlaying } from "./services/nowPlaying";
 import { decidePermission } from "./services/claudeBridge";
@@ -178,12 +179,13 @@ app.whenReady().then(async () => {
   screen.on("display-removed", placeWindow);
   store.on("change", (s) => !win.isDestroyed() && win.webContents.send("notch:state", s));
 
-  startServer(config);
+  startServer(config, process.env.NOTCH_SMOKE ? smokeRoutes(win, (h) => win.webContents.send("notch:hover", h)) : {});
   startNowPlaying();
   startCalendar(config.calendar);
   startClipboard();
   startPower();
-  startMicMonitor();
+  // 音声入力をよく使うなら config.json の recorder.showMicIndicator を false にすると出なくなる
+  if (config.recorder.showMicIndicator) startMicMonitor();
   await loadShelf();
 });
 
